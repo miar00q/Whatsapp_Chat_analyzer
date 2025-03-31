@@ -37,7 +37,8 @@ Navigate to the sidebar to begin your analysis!
 
 🔗 **Access the Project here:** [WhatsApp Chat Analyzer Live](https://whatsappchatanalyzergit-unh69p5gdr2fzg49bpkfvt.streamlit.app/)
 
----
+## 📢📢📢📢 : If page doesn't open properly then copy link and paste on new browser tab: https://whatsappchatanalyzergit-unh69p5gdr2fzg49bpkfvt.streamlit.app/
+--
 
 Happy analyzing! 😊
 
