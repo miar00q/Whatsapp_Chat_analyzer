@@ -115,6 +115,7 @@ if uploaded_file is not None:
 
         ## Monthly timeline analysis
         st.title('Monthly Timeline')
+        st.info("This timeline shows the number of messages sent in each month.")
         timeline = helper.monthly_timeline(selected_user, filtered_df)
 
         fig, ax = plt.subplots(figsize=(10, 5))
@@ -131,6 +132,7 @@ if uploaded_file is not None:
 
         ## daily timeline
         st.title('Daily Timeline')
+        st.info("This timeline shows the number of messages sent in each day.")
         daily = daily_timeline(selected_user, filtered_df)
 
         fig, ax = plt.subplots(figsize=(12, 6))
@@ -148,6 +150,7 @@ if uploaded_file is not None:
 
         ##Activity Map
         st.title('Activity Map')
+        st.info("This map shows the number of messages sent in each day of the week.")
 
         col1, col2 = st.columns(2)
 
@@ -170,6 +173,7 @@ if uploaded_file is not None:
         #Acitivity heatmap
         st.markdown("<hr style='height:3px;border:none;color:#333;background-color:#333;' />", unsafe_allow_html=True)
         st.title('Activity Heatmap')
+        st.info("This heatmap shows the number of messages sent in each hour of the day.")
         user_heatmap = helper.activity_heatmap(selected_user, df)
         fig, ax = plt.subplots(figsize=(10, 6))
         ax = sns.heatmap(user_heatmap, annot=True, fmt=".0f", linewidths=.5, ax=ax)
@@ -197,6 +201,7 @@ if uploaded_file is not None:
 
         #WordCloud
         st.title('WordCloud')
+        st.info("This wordcloud shows the most frequently used words in the chat.")
         df_wc=helper.crate_word_cloud(selected_user,df)
         fig,ax = plt.subplots()
         ax.imshow(df_wc)
@@ -205,6 +210,7 @@ if uploaded_file is not None:
         #most common words
         st.markdown("<hr style='height:3px;border:none;color:#333;background-color:#333;' />", unsafe_allow_html=True)
         st.title('Most Common Words')
+        st.info("This bar chart shows the most frequently used words in the chat.")
         col6, col7 = st.columns(2)
 
         most_common_df = helper.most_common_words(selected_user,df)
@@ -222,6 +228,7 @@ if uploaded_file is not None:
         #emoji analysis
         st.markdown("<hr style='height:3px;border:none;color:#333;background-color:#333;' />", unsafe_allow_html=True)
         st.title('Emoji Analysis')
+        st.info("This pie chart shows the most frequently used emojis in the chat.")
         col1, col2 = st.columns(2)
 
         emoji_df = helper.emoji_count(selected_user,df)
