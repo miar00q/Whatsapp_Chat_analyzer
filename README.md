@@ -35,7 +35,7 @@ Welcome to **WhatsApp Chat Analyzer**! This application helps you visualize and 
 ## 💼 Get Started
 Navigate to the sidebar to begin your analysis! 
 
-🔗 **Project Repository:** [WhatsApp Chat Analyzer on GitHub](https://github.com/SatyamSingh-Git/Whatsapp_Chat_analyzer.git)
+🔗 **Access the Project here: ** [WhatsApp Chat Analyzer on GitHub](https://whatsappchatanalyzergit-unh69p5gdr2fzg49bpkfvt.streamlit.app/)
 
 ---
 
