@@ -17,7 +17,7 @@ def preprocess(data):
     })
 
     # Remove leading/trailing whitespaces and ensure encoding issues are handled
-    df['message_date'] = df['message_date'].str.strip()
+    df['message_date'] = df['message_date'].astype(str).str.strip()
 
     # convert messages_date type
     df['message_date'] = pd.to_datetime(df['message_date'].str.replace('\u202f', ' ').str.strip(),
