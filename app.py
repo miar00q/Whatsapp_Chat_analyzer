@@ -177,9 +177,11 @@ if uploaded_file is not None:
         st.info("This heatmap shows the number of messages sent in each hour of the day.")
         user_heatmap = helper.activity_heatmap(selected_user, df)
         user_heatmap = user_heatmap.apply(pd.to_numeric, errors='coerce').fillna(0)
-        fig, ax = plt.subplots(figsize=(10, 6))
-        ax = sns.heatmap(user_heatmap, annot=True, fmt=".0f", linewidths=.5, ax=ax)
-        st.pyplot(fig)
+        if user_heatmap.empty or user_heatmap.values.size == 0:
+            st.write("No data to show in Heatmap")  # Assuming you're using Streamlit for the interface.
+        else:
+            ax = sns.heatmap(user_heatmap, annot=True, fmt=".0f", linewidths=.5)
+            st.pyplot(ax.figure)  # assuming you're plotting the figure in Streamlit
 
         ##Findinf the busiest users in the group
         st.markdown("<hr style='height:3px;border:none;color:#333;background-color:#333;' />", unsafe_allow_html=True)
