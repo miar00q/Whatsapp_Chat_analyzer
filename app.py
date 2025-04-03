@@ -1,3 +1,4 @@
+import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -175,6 +176,7 @@ if uploaded_file is not None:
         st.title('Activity Heatmap')
         st.info("This heatmap shows the number of messages sent in each hour of the day.")
         user_heatmap = helper.activity_heatmap(selected_user, df)
+        user_heatmap = user_heatmap.apply(pd.to_numeric, errors='coerce').fillna(0)
         fig, ax = plt.subplots(figsize=(10, 6))
         ax = sns.heatmap(user_heatmap, annot=True, fmt=".0f", linewidths=.5, ax=ax)
         st.pyplot(fig)
