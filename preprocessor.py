@@ -1,72 +1,48 @@
 import pandas as pd
 import re
 
+
 def preprocess(data):
-    pattern = r'\d{2}/\d{2}/\d{4},\s\d{1,2}:\d{2}\s(?:am|pm)\s-\s'
+    pattern = r'(\d{2}/\d{2}/\d{2,4}),\s*(\d{1,2}:\d{2}\s?[APap][Mm])\s-\s'
 
-    messages = re.split(pattern, data)
-    dates = re.findall(pattern, data)
+    messages = re.split(pattern, data)[1:]  # Skip first empty element
+    parsed_data = []
 
-    # Find the minimum length between the two lists
-    min_length = min(len(messages), len(dates))
+    # iterate grouped elements (date, time, message)
+    for i in range(0, len(messages), 3):
+        date_str = messages[i]
+        time_str = messages[i + 1].replace('\u202f', ' ').strip()  # remove hidden unicode spaces
+        message = messages[i + 2].strip()
 
-    # Use only the first min_length elements from each list
-    df = pd.DataFrame({
-        'user_message': messages[:min_length],
-        'message_date': dates[:min_length]
-    })
+        parsed_data.append([date_str, time_str, message])
 
-    # Remove leading/trailing whitespaces and ensure encoding issues are handled
-    df['message_date'] = df['message_date'].astype(str).str.strip()
+    df = pd.DataFrame(parsed_data, columns=['date', 'time', 'user_message'])
 
-    # convert messages_date type
-    df['message_date'] = pd.to_datetime(df['message_date'].str.replace('\u202f', ' ').str.strip(),
-                                        format='%d/%m/%Y, %I:%M %p -')
+    # safely parsed datetime
+    df['datetime'] = pd.to_datetime(df['date'] + ' ' + df['time'], dayfirst=True, errors='coerce')
 
-    df.rename(columns={'message_date': 'date'}, inplace=True)
+    df.dropna(subset=['datetime'], inplace=True)
 
-    # Splitting the user and messages
-    users = []
-    messages = []
+    # Splitting user from message safely
+    def split_user_message(entry):
+        parts = entry.split(': ', 1)
+        if len(parts) == 2:
+            return parts[0], parts[1]
+        return "group_notification", entry
 
-    for message in df['user_message']:
-        # This pattern will match names that may include parentheses, followed by colon and space
-        entry = re.split(r'([^:]+):\s', message)
-
-        if entry[1:]:
-            users.append(entry[1])
-            messages.append(entry[2])
-        else:
-            users.append('group_notification')
-            messages.append(entry[0])
-
-    df['user'] = users
-    df['message'] = messages
+    df[['user', 'message']] = df['user_message'].apply(split_user_message).tolist()
     df.drop(columns=['user_message'], inplace=True)
 
-    df['only_date'] = df['date'].dt.date
-    df['only_date'] = pd.to_datetime(df['only_date'])
+    # Further datetime enhancements:
+    df['only_date'] = df['datetime'].dt.date
+    df['day_name'] = df['datetime'].dt.day_name()
+    df['year'] = df['datetime'].dt.year
+    df['month_num'] = df['datetime'].dt.month
+    df['month'] = df['datetime'].dt.month_name()
+    df['day'] = df['datetime'].dt.day
+    df['hour'] = df['datetime'].dt.hour
+    df['minute'] = df['datetime'].dt.minute
 
-    df['day_name'] = df['date'].dt.day_name()
-    df['year'] = df['date'].dt.year
-    df['month_num'] = df['date'].dt.month
-    df['month'] = df['date'].dt.month_name()
-    df['day'] = df['date'].dt.day
-    df['hour'] = df['date'].dt.hour
-    df['minute'] = df['date'].dt.minute
-
-    period = []
-
-    for hour in df[['day_name', 'hour']]['hour']:
-        if hour == 23:
-            period.append(str(hour)+"-"+str('00'))
-        elif hour == 0:
-            period.append(str('00')+"-"+str(hour + 1))
-        else:
-            period.append(str(hour)+"-"+str(hour + 1))
-
-    df['period'] = period
+    df['period'] = df['hour'].apply(lambda hour: f"{hour:02}-{(hour + 1) % 24:02}")
 
     return df
-
-
